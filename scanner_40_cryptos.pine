@@ -103,94 +103,97 @@ sup_factor = input.float(3.0,
      minval  = 0.1, step = 0.1,
      tooltip = 'Multiplica o ATR para definir a banda do SuperTrend.\nValores maiores → menos sensível / menos sinais.\nValores menores → mais sensível / mais sinais.')
 
-///////////////////////
-// SÍMBOLOS — CRIPTO //  slots 01–20
-///////////////////////
-u01 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's01', tooltip = 'Ativar/desativar este símbolo no scanner')
-u02 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's02', tooltip = 'Ativar/desativar este símbolo no scanner')
-u03 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's03', tooltip = 'Ativar/desativar este símbolo no scanner')
-u04 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's04', tooltip = 'Ativar/desativar este símbolo no scanner')
-u05 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's05', tooltip = 'Ativar/desativar este símbolo no scanner')
-u06 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's06', tooltip = 'Ativar/desativar este símbolo no scanner')
-u07 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's07', tooltip = 'Ativar/desativar este símbolo no scanner')
-u08 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's08', tooltip = 'Ativar/desativar este símbolo no scanner')
-u09 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's09', tooltip = 'Ativar/desativar este símbolo no scanner')
-u10 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's10', tooltip = 'Ativar/desativar este símbolo no scanner')
-u11 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's11', tooltip = 'Ativar/desativar este símbolo no scanner')
-u12 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's12', tooltip = 'Ativar/desativar este símbolo no scanner')
-u13 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's13', tooltip = 'Ativar/desativar este símbolo no scanner')
-u14 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's14', tooltip = 'Ativar/desativar este símbolo no scanner')
-u15 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's15', tooltip = 'Ativar/desativar este símbolo no scanner')
-u16 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's16', tooltip = 'Ativar/desativar este símbolo no scanner')
-u17 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's17', tooltip = 'Ativar/desativar este símbolo no scanner')
-u18 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's18', tooltip = 'Ativar/desativar este símbolo no scanner')
-u19 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's19', tooltip = 'Ativar/desativar este símbolo no scanner')
-u20 = input.bool(true, '', group = '🪙 Criptos (1-20)', inline = 's20', tooltip = 'Ativar/desativar este símbolo no scanner')
+// ─────────────────────────────────────────────────────────────────────────────
+// Estrutura da tabela (37 linhas totais):
+//   Linha  0      → cabeçalho principal
+//   Linha  1      → separador 🪙 CRIPTOS
+//   Linhas 2–17   → 16 criptos         (slots 01–16)
+//   Linha  18     → separador 🇧🇷 AÇÕES BR
+//   Linhas 19–27  →  9 ações brasileiras (slots 17–25)
+//   Linha  28     → separador 🇺🇸 AÇÕES US
+//   Linhas 29–36  →  8 ações americanas  (slots 26–33)
+// ─────────────────────────────────────────────────────────────────────────────
 
-s01 = input.symbol('BTCUSDT',   group = '🪙 Criptos (1-20)', inline = 's01', tooltip = 'Cripto 01 — pode ser trocado por qualquer ativo do TradingView')
-s02 = input.symbol('ETHUSDT',   group = '🪙 Criptos (1-20)', inline = 's02', tooltip = 'Cripto 02 — pode ser trocado por qualquer ativo do TradingView')
-s03 = input.symbol('BNBUSDT',   group = '🪙 Criptos (1-20)', inline = 's03', tooltip = 'Cripto 03 — pode ser trocado por qualquer ativo do TradingView')
-s04 = input.symbol('XRPUSDT',   group = '🪙 Criptos (1-20)', inline = 's04', tooltip = 'Cripto 04 — pode ser trocado por qualquer ativo do TradingView')
-s05 = input.symbol('SOLUSDT',   group = '🪙 Criptos (1-20)', inline = 's05', tooltip = 'Cripto 05 — pode ser trocado por qualquer ativo do TradingView')
-s06 = input.symbol('ADAUSDT',   group = '🪙 Criptos (1-20)', inline = 's06', tooltip = 'Cripto 06 — pode ser trocado por qualquer ativo do TradingView')
-s07 = input.symbol('AVAXUSDT',  group = '🪙 Criptos (1-20)', inline = 's07', tooltip = 'Cripto 07 — pode ser trocado por qualquer ativo do TradingView')
-s08 = input.symbol('DOGEUSDT',  group = '🪙 Criptos (1-20)', inline = 's08', tooltip = 'Cripto 08 — pode ser trocado por qualquer ativo do TradingView')
-s09 = input.symbol('DOTUSDT',   group = '🪙 Criptos (1-20)', inline = 's09', tooltip = 'Cripto 09 — pode ser trocado por qualquer ativo do TradingView')
-s10 = input.symbol('MATICUSDT', group = '🪙 Criptos (1-20)', inline = 's10', tooltip = 'Cripto 10 — pode ser trocado por qualquer ativo do TradingView')
-s11 = input.symbol('LINKUSDT',  group = '🪙 Criptos (1-20)', inline = 's11', tooltip = 'Cripto 11 — pode ser trocado por qualquer ativo do TradingView')
-s12 = input.symbol('LTCUSDT',   group = '🪙 Criptos (1-20)', inline = 's12', tooltip = 'Cripto 12 — pode ser trocado por qualquer ativo do TradingView')
-s13 = input.symbol('ATOMUSDT',  group = '🪙 Criptos (1-20)', inline = 's13', tooltip = 'Cripto 13 — pode ser trocado por qualquer ativo do TradingView')
-s14 = input.symbol('UNIUSDT',   group = '🪙 Criptos (1-20)', inline = 's14', tooltip = 'Cripto 14 — pode ser trocado por qualquer ativo do TradingView')
-s15 = input.symbol('NEARUSDT',  group = '🪙 Criptos (1-20)', inline = 's15', tooltip = 'Cripto 15 — pode ser trocado por qualquer ativo do TradingView')
-s16 = input.symbol('AAVEUSDT',  group = '🪙 Criptos (1-20)', inline = 's16', tooltip = 'Cripto 16 — pode ser trocado por qualquer ativo do TradingView')
-s17 = input.symbol('TRXUSDT',   group = '🪙 Criptos (1-20)', inline = 's17', tooltip = 'Cripto 17 — pode ser trocado por qualquer ativo do TradingView')
-s18 = input.symbol('XLMUSDT',   group = '🪙 Criptos (1-20)', inline = 's18', tooltip = 'Cripto 18 — pode ser trocado por qualquer ativo do TradingView')
-s19 = input.symbol('SHIBUSDT',  group = '🪙 Criptos (1-20)', inline = 's19', tooltip = 'Cripto 19 — pode ser trocado por qualquer ativo do TradingView')
-s20 = input.symbol('GRTUSDT',   group = '🪙 Criptos (1-20)', inline = 's20', tooltip = 'Cripto 20 — pode ser trocado por qualquer ativo do TradingView')
+///////////////////////
+// SÍMBOLOS — CRIPTO //  slots 01–16
+///////////////////////
+u01 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's01', tooltip = 'Ativar/desativar este símbolo no scanner')
+u02 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's02', tooltip = 'Ativar/desativar este símbolo no scanner')
+u03 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's03', tooltip = 'Ativar/desativar este símbolo no scanner')
+u04 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's04', tooltip = 'Ativar/desativar este símbolo no scanner')
+u05 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's05', tooltip = 'Ativar/desativar este símbolo no scanner')
+u06 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's06', tooltip = 'Ativar/desativar este símbolo no scanner')
+u07 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's07', tooltip = 'Ativar/desativar este símbolo no scanner')
+u08 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's08', tooltip = 'Ativar/desativar este símbolo no scanner')
+u09 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's09', tooltip = 'Ativar/desativar este símbolo no scanner')
+u10 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's10', tooltip = 'Ativar/desativar este símbolo no scanner')
+u11 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's11', tooltip = 'Ativar/desativar este símbolo no scanner')
+u12 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's12', tooltip = 'Ativar/desativar este símbolo no scanner')
+u13 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's13', tooltip = 'Ativar/desativar este símbolo no scanner')
+u14 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's14', tooltip = 'Ativar/desativar este símbolo no scanner')
+u15 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's15', tooltip = 'Ativar/desativar este símbolo no scanner')
+u16 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's16', tooltip = 'Ativar/desativar este símbolo no scanner')
+
+s01 = input.symbol('BTCUSDT',   group = '🪙 Criptos (1-16)', inline = 's01', tooltip = 'Cripto 01')
+s02 = input.symbol('ETHUSDT',   group = '🪙 Criptos (1-16)', inline = 's02', tooltip = 'Cripto 02')
+s03 = input.symbol('BNBUSDT',   group = '🪙 Criptos (1-16)', inline = 's03', tooltip = 'Cripto 03')
+s04 = input.symbol('XRPUSDT',   group = '🪙 Criptos (1-16)', inline = 's04', tooltip = 'Cripto 04')
+s05 = input.symbol('SOLUSDT',   group = '🪙 Criptos (1-16)', inline = 's05', tooltip = 'Cripto 05')
+s06 = input.symbol('ADAUSDT',   group = '🪙 Criptos (1-16)', inline = 's06', tooltip = 'Cripto 06')
+s07 = input.symbol('AVAXUSDT',  group = '🪙 Criptos (1-16)', inline = 's07', tooltip = 'Cripto 07')
+s08 = input.symbol('DOGEUSDT',  group = '🪙 Criptos (1-16)', inline = 's08', tooltip = 'Cripto 08')
+s09 = input.symbol('DOTUSDT',   group = '🪙 Criptos (1-16)', inline = 's09', tooltip = 'Cripto 09')
+s10 = input.symbol('MATICUSDT', group = '🪙 Criptos (1-16)', inline = 's10', tooltip = 'Cripto 10')
+s11 = input.symbol('LINKUSDT',  group = '🪙 Criptos (1-16)', inline = 's11', tooltip = 'Cripto 11')
+s12 = input.symbol('LTCUSDT',   group = '🪙 Criptos (1-16)', inline = 's12', tooltip = 'Cripto 12')
+s13 = input.symbol('ATOMUSDT',  group = '🪙 Criptos (1-16)', inline = 's13', tooltip = 'Cripto 13')
+s14 = input.symbol('UNIUSDT',   group = '🪙 Criptos (1-16)', inline = 's14', tooltip = 'Cripto 14')
+s15 = input.symbol('NEARUSDT',  group = '🪙 Criptos (1-16)', inline = 's15', tooltip = 'Cripto 15')
+s16 = input.symbol('AAVEUSDT',  group = '🪙 Criptos (1-16)', inline = 's16', tooltip = 'Cripto 16')
 
 //////////////////////////////////
-// SÍMBOLOS — AÇÕES BRASILEIRAS //  slots 21–29
+// SÍMBOLOS — AÇÕES BRASILEIRAS //  slots 17–25
 //////////////////////////////////
-u21 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's21', tooltip = 'Ativar/desativar este símbolo no scanner')
-u22 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's22', tooltip = 'Ativar/desativar este símbolo no scanner')
-u23 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's23', tooltip = 'Ativar/desativar este símbolo no scanner')
-u24 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's24', tooltip = 'Ativar/desativar este símbolo no scanner')
-u25 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's25', tooltip = 'Ativar/desativar este símbolo no scanner')
-u26 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's26', tooltip = 'Ativar/desativar este símbolo no scanner')
-u27 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's27', tooltip = 'Ativar/desativar este símbolo no scanner')
-u28 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's28', tooltip = 'Ativar/desativar este símbolo no scanner')
-u29 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's29', tooltip = 'Ativar/desativar este símbolo no scanner')
+u17 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's17', tooltip = 'Ativar/desativar este símbolo no scanner')
+u18 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's18', tooltip = 'Ativar/desativar este símbolo no scanner')
+u19 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's19', tooltip = 'Ativar/desativar este símbolo no scanner')
+u20 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's20', tooltip = 'Ativar/desativar este símbolo no scanner')
+u21 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's21', tooltip = 'Ativar/desativar este símbolo no scanner')
+u22 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's22', tooltip = 'Ativar/desativar este símbolo no scanner')
+u23 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's23', tooltip = 'Ativar/desativar este símbolo no scanner')
+u24 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's24', tooltip = 'Ativar/desativar este símbolo no scanner')
+u25 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's25', tooltip = 'Ativar/desativar este símbolo no scanner')
 
-s21 = input.symbol('BMFBOVESPA:PETR4', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's21', tooltip = 'Ação BR 21 — pode ser trocada por qualquer ativo do TradingView')
-s22 = input.symbol('BMFBOVESPA:VALE3', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's22', tooltip = 'Ação BR 22 — pode ser trocada por qualquer ativo do TradingView')
-s23 = input.symbol('BMFBOVESPA:ITUB4', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's23', tooltip = 'Ação BR 23 — pode ser trocada por qualquer ativo do TradingView')
-s24 = input.symbol('BMFBOVESPA:BBDC4', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's24', tooltip = 'Ação BR 24 — pode ser trocada por qualquer ativo do TradingView')
-s25 = input.symbol('BMFBOVESPA:ABEV3', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's25', tooltip = 'Ação BR 25 — pode ser trocada por qualquer ativo do TradingView')
-s26 = input.symbol('BMFBOVESPA:WEGE3', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's26', tooltip = 'Ação BR 26 — pode ser trocada por qualquer ativo do TradingView')
-s27 = input.symbol('BMFBOVESPA:B3SA3', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's27', tooltip = 'Ação BR 27 — pode ser trocada por qualquer ativo do TradingView')
-s28 = input.symbol('BMFBOVESPA:RENT3', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's28', tooltip = 'Ação BR 28 — pode ser trocada por qualquer ativo do TradingView')
-s29 = input.symbol('BMFBOVESPA:MGLU3', group = '🇧🇷 Ações Brasileiras (21-29)', inline = 's29', tooltip = 'Ação BR 29 — pode ser trocada por qualquer ativo do TradingView')
+s17 = input.symbol('BMFBOVESPA:PETR4', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's17', tooltip = 'Ação BR 17')
+s18 = input.symbol('BMFBOVESPA:VALE3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's18', tooltip = 'Ação BR 18')
+s19 = input.symbol('BMFBOVESPA:ITUB4', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's19', tooltip = 'Ação BR 19')
+s20 = input.symbol('BMFBOVESPA:BBDC4', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's20', tooltip = 'Ação BR 20')
+s21 = input.symbol('BMFBOVESPA:ABEV3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's21', tooltip = 'Ação BR 21')
+s22 = input.symbol('BMFBOVESPA:WEGE3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's22', tooltip = 'Ação BR 22')
+s23 = input.symbol('BMFBOVESPA:B3SA3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's23', tooltip = 'Ação BR 23')
+s24 = input.symbol('BMFBOVESPA:RENT3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's24', tooltip = 'Ação BR 24')
+s25 = input.symbol('BMFBOVESPA:MGLU3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's25', tooltip = 'Ação BR 25')
 
 /////////////////////////////////
-// SÍMBOLOS — AÇÕES AMERICANAS //  slots 30–37
+// SÍMBOLOS — AÇÕES AMERICANAS //  slots 26–33
 /////////////////////////////////
-u30 = input.bool(true, '', group = '🇺🇸 Ações Americanas (30-37)', inline = 's30', tooltip = 'Ativar/desativar este símbolo no scanner')
-u31 = input.bool(true, '', group = '🇺🇸 Ações Americanas (30-37)', inline = 's31', tooltip = 'Ativar/desativar este símbolo no scanner')
-u32 = input.bool(true, '', group = '🇺🇸 Ações Americanas (30-37)', inline = 's32', tooltip = 'Ativar/desativar este símbolo no scanner')
-u33 = input.bool(true, '', group = '🇺🇸 Ações Americanas (30-37)', inline = 's33', tooltip = 'Ativar/desativar este símbolo no scanner')
-u34 = input.bool(true, '', group = '🇺🇸 Ações Americanas (30-37)', inline = 's34', tooltip = 'Ativar/desativar este símbolo no scanner')
-u35 = input.bool(true, '', group = '🇺🇸 Ações Americanas (30-37)', inline = 's35', tooltip = 'Ativar/desativar este símbolo no scanner')
-u36 = input.bool(true, '', group = '🇺🇸 Ações Americanas (30-37)', inline = 's36', tooltip = 'Ativar/desativar este símbolo no scanner')
-u37 = input.bool(true, '', group = '🇺🇸 Ações Americanas (30-37)', inline = 's37', tooltip = 'Ativar/desativar este símbolo no scanner')
+u26 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's26', tooltip = 'Ativar/desativar este símbolo no scanner')
+u27 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's27', tooltip = 'Ativar/desativar este símbolo no scanner')
+u28 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's28', tooltip = 'Ativar/desativar este símbolo no scanner')
+u29 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's29', tooltip = 'Ativar/desativar este símbolo no scanner')
+u30 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's30', tooltip = 'Ativar/desativar este símbolo no scanner')
+u31 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's31', tooltip = 'Ativar/desativar este símbolo no scanner')
+u32 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's32', tooltip = 'Ativar/desativar este símbolo no scanner')
+u33 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's33', tooltip = 'Ativar/desativar este símbolo no scanner')
 
-s30 = input.symbol('NASDAQ:AAPL',  group = '🇺🇸 Ações Americanas (30-37)', inline = 's30', tooltip = 'Ação US 30 — pode ser trocada por qualquer ativo do TradingView')
-s31 = input.symbol('NASDAQ:MSFT',  group = '🇺🇸 Ações Americanas (30-37)', inline = 's31', tooltip = 'Ação US 31 — pode ser trocada por qualquer ativo do TradingView')
-s32 = input.symbol('NASDAQ:GOOGL', group = '🇺🇸 Ações Americanas (30-37)', inline = 's32', tooltip = 'Ação US 32 — pode ser trocada por qualquer ativo do TradingView')
-s33 = input.symbol('NASDAQ:AMZN',  group = '🇺🇸 Ações Americanas (30-37)', inline = 's33', tooltip = 'Ação US 33 — pode ser trocada por qualquer ativo do TradingView')
-s34 = input.symbol('NASDAQ:TSLA',  group = '🇺🇸 Ações Americanas (30-37)', inline = 's34', tooltip = 'Ação US 34 — pode ser trocada por qualquer ativo do TradingView')
-s35 = input.symbol('NASDAQ:NVDA',  group = '🇺🇸 Ações Americanas (30-37)', inline = 's35', tooltip = 'Ação US 35 — pode ser trocada por qualquer ativo do TradingView')
-s36 = input.symbol('NASDAQ:META',  group = '🇺🇸 Ações Americanas (30-37)', inline = 's36', tooltip = 'Ação US 36 — pode ser trocada por qualquer ativo do TradingView')
-s37 = input.symbol('NASDAQ:NFLX',  group = '🇺🇸 Ações Americanas (30-37)', inline = 's37', tooltip = 'Ação US 37 — pode ser trocada por qualquer ativo do TradingView')
+s26 = input.symbol('NASDAQ:AAPL',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's26', tooltip = 'Ação US 26')
+s27 = input.symbol('NASDAQ:MSFT',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's27', tooltip = 'Ação US 27')
+s28 = input.symbol('NASDAQ:GOOGL', group = '🇺🇸 Ações Americanas (26-33)', inline = 's28', tooltip = 'Ação US 28')
+s29 = input.symbol('NASDAQ:AMZN',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's29', tooltip = 'Ação US 29')
+s30 = input.symbol('NASDAQ:TSLA',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's30', tooltip = 'Ação US 30')
+s31 = input.symbol('NASDAQ:NVDA',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's31', tooltip = 'Ação US 31')
+s32 = input.symbol('NASDAQ:META',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's32', tooltip = 'Ação US 32')
+s33 = input.symbol('NASDAQ:NFLX',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's33', tooltip = 'Ação US 33')
 
 //////////////////
 // CALCULATIONS //
@@ -243,10 +246,6 @@ id_symbol(s) =>
         31 => only_symbol(s31)
         32 => only_symbol(s32)
         33 => only_symbol(s33)
-        34 => only_symbol(s34)
-        35 => only_symbol(s35)
-        36 => only_symbol(s36)
-        37 => only_symbol(s37)
         => na
 
 // TSI helper
@@ -290,7 +289,7 @@ screenerFun(numSym, sym, flg) =>
     if flg
         matrix.add_row(screenerMtx, matrix.rows(screenerMtx), arr)
 
-// Security calls — 37 ativos no total
+// Security calls — 33 ativos: 16 criptos + 9 BR + 8 US
 screenerFun(01, s01, u01)
 screenerFun(02, s02, u02)
 screenerFun(03, s03, u03)
@@ -324,10 +323,6 @@ screenerFun(30, s30, u30)
 screenerFun(31, s31, u31)
 screenerFun(32, s32, u32)
 screenerFun(33, s33, u33)
-screenerFun(34, s34, u34)
-screenerFun(35, s35, u35)
-screenerFun(36, s36, u36)
-screenerFun(37, s37, u37)
 
 ///////////
 // PLOTS //
@@ -337,26 +332,26 @@ C_SEP_CRIPTO = #1a3a5c   // azul escuro
 C_SEP_BR     = #1a4a2e   // verde escuro
 C_SEP_US     = #3a1a1a   // vermelho escuro
 
-// Linhas: 1 cabeçalho + 3 separadores de seção + 37 ativos = 41 linhas (índices 0–40)
-var tbl = table.new(position.top_right, 6, 41,
+// 37 linhas totais: 1 cabeçalho + 3 separadores + 33 ativos (índices 0–36)
+var tbl = table.new(position.top_right, 6, 37,
      frame_color  = #151715,
      frame_width  = 1,
      border_width = 2,
      border_color = color.new(color.white, 100))
 
-// Helper: preenche todas as 6 células de uma linha com cor e texto (separador visual)
+// Helper: preenche as 6 células de uma linha separadora com cor e texto
 sep_row(row, bg, txt) =>
-    table.cell(tbl, 0, row, txt,  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
-    table.cell(tbl, 1, row, '',   text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
-    table.cell(tbl, 2, row, '',   text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
-    table.cell(tbl, 3, row, '',   text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
-    table.cell(tbl, 4, row, '',   text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
-    table.cell(tbl, 5, row, '',   text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 0, row, txt, text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 1, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 2, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 3, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 4, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 5, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
 
 alert_msg = ''
 
 if barstate.islast
-    table.clear(tbl, 0, 0, 5, 40)
+    table.clear(tbl, 0, 0, 5, 36)
 
     // Cabeçalho principal
     table.cell(tbl, 0, 0, 'Símbolo',    text_halign = text.align_center, bgcolor = color.gray, text_color = color.white, text_size = size.small)
@@ -367,38 +362,39 @@ if barstate.islast
     table.cell(tbl, 5, 0, 'SuperTrend', text_halign = text.align_center, bgcolor = color.gray, text_color = color.white, text_size = size.small)
 
     if matrix.rows(screenerMtx) > 0
-        tbl_row            = 1
-        showed_cripto_sep  = false
-        showed_br_sep      = false
-        showed_us_sep      = false
+        tbl_row           = 1
+        showed_cripto_sep = false
+        showed_br_sep     = false
+        showed_us_sep     = false
 
         for i = 0 to matrix.rows(screenerMtx) - 1 by 1
-            num     = int(matrix.get(screenerMtx, i, 0))
-            is_filt = not filter_enabled or
-                 (matrix.get(screenerMtx, i, filt_col_id) >= filter_from and
-                  matrix.get(screenerMtx, i, filt_col_id) <= filter_to)
+            num      = int(matrix.get(screenerMtx, i, 0))
+            col_val  = matrix.get(screenerMtx, i, filt_col_id)
+            is_filt  = not filter_enabled or (col_val >= filter_from and col_val <= filter_to)
 
             if is_filt
-                // ── Inserir separador de seção quando necessário ─────────────
-                if num <= 20 and not showed_cripto_sep
+                // ── Separadores de seção ─────────────────────────────────────
+                if num <= 16 and not showed_cripto_sep
                     sep_row(tbl_row, C_SEP_CRIPTO, '🪙  C R I P T O S')
                     tbl_row           := tbl_row + 1
                     showed_cripto_sep := true
 
-                if num >= 21 and num <= 29 and not showed_br_sep
+                if num >= 17 and num <= 25 and not showed_br_sep
                     sep_row(tbl_row, C_SEP_BR, '🇧🇷  A Ç Õ E S   B R A S I L E I R A S')
-                    tbl_row      := tbl_row + 1
+                    tbl_row       := tbl_row + 1
                     showed_br_sep := true
 
-                if num >= 30 and not showed_us_sep
+                if num >= 26 and not showed_us_sep
                     sep_row(tbl_row, C_SEP_US, '🇺🇸  A Ç Õ E S   A M E R I C A N A S')
-                    tbl_row      := tbl_row + 1
+                    tbl_row       := tbl_row + 1
                     showed_us_sep := true
 
-                // ── Linha de dados do ativo ──────────────────────────────────
+                // ── Linha de dados ───────────────────────────────────────────
+                sym_name = id_symbol(num)
+
                 if str.length(alert_msg) > 0
                     alert_msg := alert_msg + ','
-                alert_msg := alert_msg + id_symbol(matrix.get(screenerMtx, i, 0))
+                alert_msg := alert_msg + sym_name
 
                 rsi_col  = matrix.get(screenerMtx, i, 2) > rsi_ob ? color.red   : matrix.get(screenerMtx, i, 2) < rsi_os ? color.green : #aaaaaa
                 tsi_col  = matrix.get(screenerMtx, i, 3) > tsi_ob ? color.red   : matrix.get(screenerMtx, i, 3) < tsi_os ? color.green : #aaaaaa
@@ -406,12 +402,12 @@ if barstate.islast
                 sup_text = matrix.get(screenerMtx, i, 5) > 0 ? '▼ Baixa' : '▲ Alta'
                 sup_col  = matrix.get(screenerMtx, i, 5) < 0 ? color.green : color.red
 
-                table.cell(tbl, 0, tbl_row, id_symbol(matrix.get(screenerMtx, i, 0)),           text_halign = text.align_left,   bgcolor = color.gray, text_color = color.white, text_size = size.small)
-                table.cell(tbl, 1, tbl_row, str.tostring(matrix.get(screenerMtx, i, 1)),         text_halign = text.align_center, bgcolor = #aaaaaa,    text_color = color.white, text_size = size.small)
-                table.cell(tbl, 2, tbl_row, str.tostring(matrix.get(screenerMtx, i, 2), '#.##'), text_halign = text.align_center, bgcolor = rsi_col,    text_color = color.white, text_size = size.small)
-                table.cell(tbl, 3, tbl_row, str.tostring(matrix.get(screenerMtx, i, 3), '#.##'), text_halign = text.align_center, bgcolor = tsi_col,    text_color = color.white, text_size = size.small)
-                table.cell(tbl, 4, tbl_row, str.tostring(matrix.get(screenerMtx, i, 4), '#.##'), text_halign = text.align_center, bgcolor = adx_col,    text_color = color.white, text_size = size.small)
-                table.cell(tbl, 5, tbl_row, sup_text,                                            text_halign = text.align_center, bgcolor = sup_col,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 0, tbl_row, sym_name,                                                     text_halign = text.align_left,   bgcolor = color.gray, text_color = color.white, text_size = size.small)
+                table.cell(tbl, 1, tbl_row, str.tostring(matrix.get(screenerMtx, i, 1)),                  text_halign = text.align_center, bgcolor = #aaaaaa,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 2, tbl_row, str.tostring(matrix.get(screenerMtx, i, 2), '#.##'),          text_halign = text.align_center, bgcolor = rsi_col,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 3, tbl_row, str.tostring(matrix.get(screenerMtx, i, 3), '#.##'),          text_halign = text.align_center, bgcolor = tsi_col,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 4, tbl_row, str.tostring(matrix.get(screenerMtx, i, 4), '#.##'),          text_halign = text.align_center, bgcolor = adx_col,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 5, tbl_row, sup_text,                                                     text_halign = text.align_center, bgcolor = sup_col,    text_color = color.white, text_size = size.small)
 
                 tbl_row := tbl_row + 1
 
