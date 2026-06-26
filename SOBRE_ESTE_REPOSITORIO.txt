@@ -1,0 +1,46 @@
+REPOSITÓRIO: pinescript-v6
+TIPO: Público | Próprio
+CONTEÚDO: PDFs (documentação)
+URL: https://github.com/odilsonriquelme/pinescript-v6
+
+DESCRIÇÃO
+---------
+Biblioteca de referência offline com a documentação oficial do Pine Script v6
+(linguagem de programação do TradingView), dividida em 8 arquivos PDF.
+
+⚠️ CORREÇÃO IMPORTANTE
+----------------------
+Os arquivos NÃO são "versões 6.1 a 6.8 da linguagem" (como uma leitura apressada do nome
+sugere). "v6" é a versão da LINGUAGEM Pine Script, e os números .1 a .8 são apenas as
+PARTES/SEÇÕES em que a documentação foi dividida em PDF (provavelmente por limite de
+tamanho ao exportar o manual do site da TradingView). Todos cobrem o MESMO Pine Script v6,
+cada um tratando de tópicos diferentes.
+
+(Identificação feita pelos hyperlinks internos de cada PDF, que apontam para
+www.tradingview.com/pine-script-reference/v6/ — confirmando que é a referência v6.)
+
+CONTEÚDO DE CADA PARTE (temas predominantes identificados nos links)
+---------------------------------------------------------------------
+PINESCRIPT V6.1.pdf (~1.4MB) → Tipos e variáveis: array, map, matrix, palavras-chave
+                               var/varip. (Fundamentos de tipos de dados.)
+PINESCRIPT V6.2.pdf (~1.4MB) → Plotagem de barras/velas: plotcandle, plotbar e os dados
+                               OHLC (open/high/low/close), tratamento de na.
+PINESCRIPT V6.3.pdf (~1.8MB) → request.security (dados de outro símbolo/TF), indicator(),
+                               chart.point, color, line. (Multi-símbolo e desenho.)
+PINESCRIPT V6.4.pdf (~1.9MB) → Estratégias: strategy.entry/exit, request.security e
+                               request.security_lower_tf, plot. (Backtest e MTF.)
+PINESCRIPT V6.5.pdf (~1.9MB) → Labels e tables, plotshape, funções de tempo (time,
+                               timestamp, str.format_time), strategy.
+PINESCRIPT V6.6.pdf (~2.1MB) → Estruturas de controle: if, for, for...in; arrays;
+                               labels; log.info. (Lógica e fluxo do programa.)
+PINESCRIPT V6.7.pdf (~1.3MB) → Estratégias (strategy.exit) e ALERTAS: alert(),
+                               alertcondition(). request.security.
+PINESCRIPT V6.8.pdf (~1.3MB) → Estratégias avançadas: strategy.close/entry, plot/hline,
+                               variáveis forward-referenced e self-referenced (removidas em v6).
+
+OBSERVAÇÃO
+----------
+Não há README neste repositório. Conjunto útil como consulta rápida offline durante o
+desenvolvimento de scripts (complementa o "Manual PineScript v6" guardado no vault em
+03 - RECURSOS/PDFs/). Como é material de referência exportado da TradingView, o conteúdo
+é estável — não requer manutenção de código.
