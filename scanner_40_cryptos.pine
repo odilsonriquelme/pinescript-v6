@@ -1,0 +1,415 @@
+// This Pine Script™ code is subject to the terms of the Mozilla Public License 2.0 at https://mozilla.org/MPL/2.0/
+// © ape_bitcoiner
+//@version=6
+indicator('Scanner Cripto + Ações BR & US @ape_bitcoiner', overlay = true)
+
+////////////
+// INPUTS //
+
+// ── Filtro ──────────────────────────────────────────────────────────────────
+filter_enabled = input.bool(false, '',
+     group   = '🔎 Filtro',
+     inline  = 'Filter',
+     tooltip = 'Ativa o filtro de exibição. Quando ligado, só aparecem na tabela os ativos cujo valor da coluna selecionada esteja dentro do intervalo "De / Até".')
+
+filter_column = input.string('Price',
+     title   = 'Coluna',
+     options = ['Price', 'RSI', 'TSI', 'ADX', 'SuperTrend'],
+     group   = '🔎 Filtro',
+     inline  = 'Filter',
+     tooltip = 'Coluna usada como critério do filtro.\n• Price → preço atual\n• RSI / TSI / ADX → valores dos indicadores\n• SuperTrend → direção (-1 = alta, 1 = baixa)')
+
+filter_from = input.float(-9999999, 'De',
+     group   = '🔎 Filtro',
+     inline  = 'Filter',
+     tooltip = 'Valor mínimo do filtro (inclusivo). Ex: RSI ≥ 30')
+
+filter_to = input.float(9999999, 'Até',
+     group   = '🔎 Filtro',
+     inline  = 'Filter',
+     tooltip = 'Valor máximo do filtro (inclusivo). Ex: RSI ≤ 70')
+
+// ── RSI ─────────────────────────────────────────────────────────────────────
+rsi_len = input.int(14,
+     title   = 'Período',
+     group   = '📊 RSI',
+     minval  = 1,
+     tooltip = 'Número de candles usados no cálculo do RSI. Padrão clássico: 14.')
+
+rsi_os = input.float(30,
+     title   = 'Sobrevenda (verde)',
+     group   = '📊 RSI',
+     minval  = 0, maxval = 100,
+     tooltip = 'Abaixo deste valor o RSI é considerado sobrevendido → célula fica VERDE.')
+
+rsi_ob = input.float(70,
+     title   = 'Sobrecompra (vermelho)',
+     group   = '📊 RSI',
+     minval  = 0, maxval = 100,
+     tooltip = 'Acima deste valor o RSI é considerado sobrecomprado → célula fica VERMELHA.')
+
+// ── TSI ─────────────────────────────────────────────────────────────────────
+tsi_long_len = input.int(25,
+     title   = 'Período Longo',
+     group   = '📈 TSI',
+     minval  = 1,
+     tooltip = 'Período da primeira EMA do TSI (suavização longa). Padrão: 25.')
+
+tsi_shrt_len = input.int(13,
+     title   = 'Período Curto',
+     group   = '📈 TSI',
+     minval  = 1,
+     tooltip = 'Período da segunda EMA do TSI (suavização curta). Padrão: 13.')
+
+tsi_ob = input.float(30,
+     title   = 'Sobrecompra (vermelho)',
+     group   = '📈 TSI',
+     tooltip = 'Acima deste valor o TSI indica sobrecompra → célula fica VERMELHA.')
+
+tsi_os = input.float(-30,
+     title   = 'Sobrevenda (verde)',
+     group   = '📈 TSI',
+     tooltip = 'Abaixo deste valor o TSI indica sobrevenda → célula fica VERDE.')
+
+// ── ADX ─────────────────────────────────────────────────────────────────────
+adx_smooth = input.int(14,
+     title   = 'Suavização',
+     group   = '📉 ADX',
+     minval  = 1,
+     tooltip = 'Período de suavização do ADX (RMA). Padrão: 14.')
+
+adx_dilen = input.int(14,
+     title   = 'Período DI',
+     group   = '📉 ADX',
+     minval  = 1,
+     tooltip = 'Período para calcular as linhas DI+ e DI-. Padrão: 14.')
+
+adx_level = input.float(40,
+     title   = 'Nível de força (verde)',
+     group   = '📉 ADX',
+     minval  = 0,
+     tooltip = 'Acima deste valor considera-se tendência forte → célula fica VERDE.\nAbaixo indica mercado lateral ou tendência fraca.')
+
+// ── SuperTrend ───────────────────────────────────────────────────────────────
+sup_atr_len = input.int(10,
+     title   = 'Período ATR',
+     group   = '🚀 SuperTrend',
+     minval  = 1,
+     tooltip = 'Período do ATR usado no cálculo do SuperTrend. Padrão: 10.')
+
+sup_factor = input.float(3.0,
+     title   = 'Fator multiplicador',
+     group   = '🚀 SuperTrend',
+     minval  = 0.1, step = 0.1,
+     tooltip = 'Multiplica o ATR para definir a banda do SuperTrend.\nValores maiores → menos sensível / menos sinais.\nValores menores → mais sensível / mais sinais.')
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Estrutura da tabela (37 linhas totais):
+//   Linha  0      → cabeçalho principal
+//   Linha  1      → separador 🪙 CRIPTOS
+//   Linhas 2–17   → 16 criptos         (slots 01–16)
+//   Linha  18     → separador 🇧🇷 AÇÕES BR
+//   Linhas 19–27  →  9 ações brasileiras (slots 17–25)
+//   Linha  28     → separador 🇺🇸 AÇÕES US
+//   Linhas 29–36  →  8 ações americanas  (slots 26–33)
+// ─────────────────────────────────────────────────────────────────────────────
+
+///////////////////////
+// SÍMBOLOS — CRIPTO //  slots 01–16
+///////////////////////
+u01 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's01', tooltip = 'Ativar/desativar este símbolo no scanner')
+u02 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's02', tooltip = 'Ativar/desativar este símbolo no scanner')
+u03 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's03', tooltip = 'Ativar/desativar este símbolo no scanner')
+u04 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's04', tooltip = 'Ativar/desativar este símbolo no scanner')
+u05 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's05', tooltip = 'Ativar/desativar este símbolo no scanner')
+u06 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's06', tooltip = 'Ativar/desativar este símbolo no scanner')
+u07 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's07', tooltip = 'Ativar/desativar este símbolo no scanner')
+u08 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's08', tooltip = 'Ativar/desativar este símbolo no scanner')
+u09 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's09', tooltip = 'Ativar/desativar este símbolo no scanner')
+u10 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's10', tooltip = 'Ativar/desativar este símbolo no scanner')
+u11 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's11', tooltip = 'Ativar/desativar este símbolo no scanner')
+u12 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's12', tooltip = 'Ativar/desativar este símbolo no scanner')
+u13 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's13', tooltip = 'Ativar/desativar este símbolo no scanner')
+u14 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's14', tooltip = 'Ativar/desativar este símbolo no scanner')
+u15 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's15', tooltip = 'Ativar/desativar este símbolo no scanner')
+u16 = input.bool(true, '', group = '🪙 Criptos (1-16)', inline = 's16', tooltip = 'Ativar/desativar este símbolo no scanner')
+
+s01 = input.symbol('BTCUSDT',   group = '🪙 Criptos (1-16)', inline = 's01', tooltip = 'Cripto 01')
+s02 = input.symbol('ETHUSDT',   group = '🪙 Criptos (1-16)', inline = 's02', tooltip = 'Cripto 02')
+s03 = input.symbol('BNBUSDT',   group = '🪙 Criptos (1-16)', inline = 's03', tooltip = 'Cripto 03')
+s04 = input.symbol('XRPUSDT',   group = '🪙 Criptos (1-16)', inline = 's04', tooltip = 'Cripto 04')
+s05 = input.symbol('SOLUSDT',   group = '🪙 Criptos (1-16)', inline = 's05', tooltip = 'Cripto 05')
+s06 = input.symbol('ADAUSDT',   group = '🪙 Criptos (1-16)', inline = 's06', tooltip = 'Cripto 06')
+s07 = input.symbol('AVAXUSDT',  group = '🪙 Criptos (1-16)', inline = 's07', tooltip = 'Cripto 07')
+s08 = input.symbol('DOGEUSDT',  group = '🪙 Criptos (1-16)', inline = 's08', tooltip = 'Cripto 08')
+s09 = input.symbol('DOTUSDT',   group = '🪙 Criptos (1-16)', inline = 's09', tooltip = 'Cripto 09')
+s10 = input.symbol('MATICUSDT', group = '🪙 Criptos (1-16)', inline = 's10', tooltip = 'Cripto 10')
+s11 = input.symbol('LINKUSDT',  group = '🪙 Criptos (1-16)', inline = 's11', tooltip = 'Cripto 11')
+s12 = input.symbol('LTCUSDT',   group = '🪙 Criptos (1-16)', inline = 's12', tooltip = 'Cripto 12')
+s13 = input.symbol('ATOMUSDT',  group = '🪙 Criptos (1-16)', inline = 's13', tooltip = 'Cripto 13')
+s14 = input.symbol('UNIUSDT',   group = '🪙 Criptos (1-16)', inline = 's14', tooltip = 'Cripto 14')
+s15 = input.symbol('NEARUSDT',  group = '🪙 Criptos (1-16)', inline = 's15', tooltip = 'Cripto 15')
+s16 = input.symbol('AAVEUSDT',  group = '🪙 Criptos (1-16)', inline = 's16', tooltip = 'Cripto 16')
+
+//////////////////////////////////
+// SÍMBOLOS — AÇÕES BRASILEIRAS //  slots 17–25
+//////////////////////////////////
+u17 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's17', tooltip = 'Ativar/desativar este símbolo no scanner')
+u18 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's18', tooltip = 'Ativar/desativar este símbolo no scanner')
+u19 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's19', tooltip = 'Ativar/desativar este símbolo no scanner')
+u20 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's20', tooltip = 'Ativar/desativar este símbolo no scanner')
+u21 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's21', tooltip = 'Ativar/desativar este símbolo no scanner')
+u22 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's22', tooltip = 'Ativar/desativar este símbolo no scanner')
+u23 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's23', tooltip = 'Ativar/desativar este símbolo no scanner')
+u24 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's24', tooltip = 'Ativar/desativar este símbolo no scanner')
+u25 = input.bool(true, '', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's25', tooltip = 'Ativar/desativar este símbolo no scanner')
+
+s17 = input.symbol('BMFBOVESPA:PETR4', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's17', tooltip = 'Ação BR 17')
+s18 = input.symbol('BMFBOVESPA:VALE3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's18', tooltip = 'Ação BR 18')
+s19 = input.symbol('BMFBOVESPA:ITUB4', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's19', tooltip = 'Ação BR 19')
+s20 = input.symbol('BMFBOVESPA:BBDC4', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's20', tooltip = 'Ação BR 20')
+s21 = input.symbol('BMFBOVESPA:ABEV3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's21', tooltip = 'Ação BR 21')
+s22 = input.symbol('BMFBOVESPA:WEGE3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's22', tooltip = 'Ação BR 22')
+s23 = input.symbol('BMFBOVESPA:B3SA3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's23', tooltip = 'Ação BR 23')
+s24 = input.symbol('BMFBOVESPA:RENT3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's24', tooltip = 'Ação BR 24')
+s25 = input.symbol('BMFBOVESPA:MGLU3', group = '🇧🇷 Ações Brasileiras (17-25)', inline = 's25', tooltip = 'Ação BR 25')
+
+/////////////////////////////////
+// SÍMBOLOS — AÇÕES AMERICANAS //  slots 26–33
+/////////////////////////////////
+u26 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's26', tooltip = 'Ativar/desativar este símbolo no scanner')
+u27 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's27', tooltip = 'Ativar/desativar este símbolo no scanner')
+u28 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's28', tooltip = 'Ativar/desativar este símbolo no scanner')
+u29 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's29', tooltip = 'Ativar/desativar este símbolo no scanner')
+u30 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's30', tooltip = 'Ativar/desativar este símbolo no scanner')
+u31 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's31', tooltip = 'Ativar/desativar este símbolo no scanner')
+u32 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's32', tooltip = 'Ativar/desativar este símbolo no scanner')
+u33 = input.bool(true, '', group = '🇺🇸 Ações Americanas (26-33)', inline = 's33', tooltip = 'Ativar/desativar este símbolo no scanner')
+
+s26 = input.symbol('NASDAQ:AAPL',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's26', tooltip = 'Ação US 26')
+s27 = input.symbol('NASDAQ:MSFT',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's27', tooltip = 'Ação US 27')
+s28 = input.symbol('NASDAQ:GOOGL', group = '🇺🇸 Ações Americanas (26-33)', inline = 's28', tooltip = 'Ação US 28')
+s29 = input.symbol('NASDAQ:AMZN',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's29', tooltip = 'Ação US 29')
+s30 = input.symbol('NASDAQ:TSLA',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's30', tooltip = 'Ação US 30')
+s31 = input.symbol('NASDAQ:NVDA',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's31', tooltip = 'Ação US 31')
+s32 = input.symbol('NASDAQ:META',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's32', tooltip = 'Ação US 32')
+s33 = input.symbol('NASDAQ:NFLX',  group = '🇺🇸 Ações Americanas (26-33)', inline = 's33', tooltip = 'Ação US 33')
+
+//////////////////
+// CALCULATIONS //
+
+filt_col_id = switch filter_column
+    'Price'      => 1
+    'RSI'        => 2
+    'TSI'        => 3
+    'ADX'        => 4
+    'SuperTrend' => 5
+    => 0
+
+// Extrai apenas o ticker, sem o prefixo de exchange (ex: "BINANCE:BTCUSDT" → "BTCUSDT")
+only_symbol(s) =>
+    parts = str.split(s, ':')
+    array.size(parts) > 1 ? array.get(parts, 1) : array.get(parts, 0)
+
+id_symbol(s) =>
+    switch s
+        1  => only_symbol(s01)
+        2  => only_symbol(s02)
+        3  => only_symbol(s03)
+        4  => only_symbol(s04)
+        5  => only_symbol(s05)
+        6  => only_symbol(s06)
+        7  => only_symbol(s07)
+        8  => only_symbol(s08)
+        9  => only_symbol(s09)
+        10 => only_symbol(s10)
+        11 => only_symbol(s11)
+        12 => only_symbol(s12)
+        13 => only_symbol(s13)
+        14 => only_symbol(s14)
+        15 => only_symbol(s15)
+        16 => only_symbol(s16)
+        17 => only_symbol(s17)
+        18 => only_symbol(s18)
+        19 => only_symbol(s19)
+        20 => only_symbol(s20)
+        21 => only_symbol(s21)
+        22 => only_symbol(s22)
+        23 => only_symbol(s23)
+        24 => only_symbol(s24)
+        25 => only_symbol(s25)
+        26 => only_symbol(s26)
+        27 => only_symbol(s27)
+        28 => only_symbol(s28)
+        29 => only_symbol(s29)
+        30 => only_symbol(s30)
+        31 => only_symbol(s31)
+        32 => only_symbol(s32)
+        33 => only_symbol(s33)
+        => na
+
+// TSI helper
+double_smooth(src, long, short) =>
+    first_smooth = ta.ema(src, long)
+    ta.ema(first_smooth, short)
+
+// ADX helper
+dirmov(len) =>
+    up        = ta.change(high)
+    down      = -ta.change(low)
+    plusDM    = na(up)   ? na : up   > down and up   > 0 ? up   : 0
+    minusDM   = na(down) ? na : down > up   and down > 0 ? down : 0
+    truerange = ta.rma(ta.tr, len)
+    plus      = fixnan(100 * ta.rma(plusDM,  len) / truerange)
+    minus     = fixnan(100 * ta.rma(minusDM, len) / truerange)
+    [plus, minus]
+
+adx_func(dilen, adxlen) =>
+    [plus, minus] = dirmov(dilen)
+    sum = plus + minus
+    adx = 100 * ta.rma(math.abs(plus - minus) / (sum == 0 ? 1 : sum), adxlen)
+    adx
+
+screener_func() =>
+    rsi = ta.rsi(close, rsi_len)
+    pc                     = ta.change(close)
+    double_smoothed_pc     = double_smooth(pc,           tsi_long_len, tsi_shrt_len)
+    double_smoothed_abs_pc = double_smooth(math.abs(pc), tsi_long_len, tsi_shrt_len)
+    tsi = 100 * (double_smoothed_pc / double_smoothed_abs_pc)
+    adx = adx_func(adx_dilen, adx_smooth)
+    [sup_value, sup_dir] = ta.supertrend(sup_factor, sup_atr_len)
+    [math.round_to_mintick(close), rsi, tsi, adx, sup_dir]
+
+// Matrix: col 0 = numSym, 1 = price, 2 = RSI, 3 = TSI, 4 = ADX, 5 = SuperTrend dir
+screenerMtx = matrix.new<float>(0, 6, na)
+
+screenerFun(numSym, sym, flg) =>
+    [cl, rsi, tsi, adx, sup] = request.security(sym, timeframe.period, screener_func())
+    arr = array.from(numSym, cl, rsi, tsi, adx, sup)
+    if flg
+        matrix.add_row(screenerMtx, matrix.rows(screenerMtx), arr)
+
+// Security calls — 33 ativos: 16 criptos + 9 BR + 8 US
+screenerFun(01, s01, u01)
+screenerFun(02, s02, u02)
+screenerFun(03, s03, u03)
+screenerFun(04, s04, u04)
+screenerFun(05, s05, u05)
+screenerFun(06, s06, u06)
+screenerFun(07, s07, u07)
+screenerFun(08, s08, u08)
+screenerFun(09, s09, u09)
+screenerFun(10, s10, u10)
+screenerFun(11, s11, u11)
+screenerFun(12, s12, u12)
+screenerFun(13, s13, u13)
+screenerFun(14, s14, u14)
+screenerFun(15, s15, u15)
+screenerFun(16, s16, u16)
+screenerFun(17, s17, u17)
+screenerFun(18, s18, u18)
+screenerFun(19, s19, u19)
+screenerFun(20, s20, u20)
+screenerFun(21, s21, u21)
+screenerFun(22, s22, u22)
+screenerFun(23, s23, u23)
+screenerFun(24, s24, u24)
+screenerFun(25, s25, u25)
+screenerFun(26, s26, u26)
+screenerFun(27, s27, u27)
+screenerFun(28, s28, u28)
+screenerFun(29, s29, u29)
+screenerFun(30, s30, u30)
+screenerFun(31, s31, u31)
+screenerFun(32, s32, u32)
+screenerFun(33, s33, u33)
+
+///////////
+// PLOTS //
+
+// Cores dos separadores de seção
+C_SEP_CRIPTO = #1a3a5c   // azul escuro
+C_SEP_BR     = #1a4a2e   // verde escuro
+C_SEP_US     = #3a1a1a   // vermelho escuro
+
+// 37 linhas totais: 1 cabeçalho + 3 separadores + 33 ativos (índices 0–36)
+var tbl = table.new(position.top_right, 6, 37,
+     frame_color  = #151715,
+     frame_width  = 1,
+     border_width = 2,
+     border_color = color.new(color.white, 100))
+
+// Helper: preenche as 6 células de uma linha separadora com cor e texto
+sep_row(row, bg, txt) =>
+    table.cell(tbl, 0, row, txt, text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 1, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 2, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 3, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 4, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 5, row, '',  text_halign = text.align_center, bgcolor = bg, text_color = color.white, text_size = size.small)
+
+alert_msg = ''
+
+if barstate.islast
+    table.clear(tbl, 0, 0, 5, 36)
+
+    // Cabeçalho principal
+    table.cell(tbl, 0, 0, 'Símbolo',    text_halign = text.align_center, bgcolor = color.gray, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 1, 0, 'Preço',      text_halign = text.align_center, bgcolor = color.gray, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 2, 0, 'RSI',        text_halign = text.align_center, bgcolor = color.gray, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 3, 0, 'TSI',        text_halign = text.align_center, bgcolor = color.gray, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 4, 0, 'ADX',        text_halign = text.align_center, bgcolor = color.gray, text_color = color.white, text_size = size.small)
+    table.cell(tbl, 5, 0, 'SuperTrend', text_halign = text.align_center, bgcolor = color.gray, text_color = color.white, text_size = size.small)
+
+    if matrix.rows(screenerMtx) > 0
+        tbl_row           = 1
+        showed_cripto_sep = false
+        showed_br_sep     = false
+        showed_us_sep     = false
+
+        for i = 0 to matrix.rows(screenerMtx) - 1 by 1
+            num      = int(matrix.get(screenerMtx, i, 0))
+            col_val  = matrix.get(screenerMtx, i, filt_col_id)
+            is_filt  = not filter_enabled or (col_val >= filter_from and col_val <= filter_to)
+
+            if is_filt
+                // ── Separadores de seção ─────────────────────────────────────
+                if num <= 16 and not showed_cripto_sep
+                    sep_row(tbl_row, C_SEP_CRIPTO, '🪙  C R I P T O S')
+                    tbl_row           := tbl_row + 1
+                    showed_cripto_sep := true
+
+                if num >= 17 and num <= 25 and not showed_br_sep
+                    sep_row(tbl_row, C_SEP_BR, '🇧🇷  A Ç Õ E S   B R A S I L E I R A S')
+                    tbl_row       := tbl_row + 1
+                    showed_br_sep := true
+
+                if num >= 26 and not showed_us_sep
+                    sep_row(tbl_row, C_SEP_US, '🇺🇸  A Ç Õ E S   A M E R I C A N A S')
+                    tbl_row       := tbl_row + 1
+                    showed_us_sep := true
+
+                // ── Linha de dados ───────────────────────────────────────────
+                sym_name = id_symbol(num)
+
+                if str.length(alert_msg) > 0
+                    alert_msg := alert_msg + ','
+                alert_msg := alert_msg + sym_name
+
+                rsi_col  = matrix.get(screenerMtx, i, 2) > rsi_ob ? color.red   : matrix.get(screenerMtx, i, 2) < rsi_os ? color.green : #aaaaaa
+                tsi_col  = matrix.get(screenerMtx, i, 3) > tsi_ob ? color.red   : matrix.get(screenerMtx, i, 3) < tsi_os ? color.green : #aaaaaa
+                adx_col  = matrix.get(screenerMtx, i, 4) > adx_level ? color.green : #aaaaaa
+                sup_text = matrix.get(screenerMtx, i, 5) > 0 ? '▼ Baixa' : '▲ Alta'
+                sup_col  = matrix.get(screenerMtx, i, 5) < 0 ? color.green : color.red
+
+                table.cell(tbl, 0, tbl_row, sym_name,                                                     text_halign = text.align_left,   bgcolor = color.gray, text_color = color.white, text_size = size.small)
+                table.cell(tbl, 1, tbl_row, str.tostring(matrix.get(screenerMtx, i, 1)),                  text_halign = text.align_center, bgcolor = #aaaaaa,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 2, tbl_row, str.tostring(matrix.get(screenerMtx, i, 2), '#.##'),          text_halign = text.align_center, bgcolor = rsi_col,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 3, tbl_row, str.tostring(matrix.get(screenerMtx, i, 3), '#.##'),          text_halign = text.align_center, bgcolor = tsi_col,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 4, tbl_row, str.tostring(matrix.get(screenerMtx, i, 4), '#.##'),          text_halign = text.align_center, bgcolor = adx_col,    text_color = color.white, text_size = size.small)
+                table.cell(tbl, 5, tbl_row, sup_text,                                                     text_halign = text.align_center, bgcolor = sup_col,    text_color = color.white, text_size = size.small)
+
+                tbl_row := tbl_row + 1
+
+if str.length(alert_msg) > 0
+    alert(alert_msg, freq = alert.freq_once_per_bar_close)
